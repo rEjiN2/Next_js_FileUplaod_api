@@ -1,10 +1,27 @@
 "use client"
 import React,{useState} from 'react';
 import { Box, Button, Typography } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 const FormSend = () => {
   const [file,setfile] = useState(null)
-  
+  const [open, setOpen] = React.useState(false);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    window.location.reload()
+  };
 
   const handleSubmit = async(event) => {
     event.preventDefault();
@@ -19,12 +36,16 @@ const FormSend = () => {
         body:data
       })
       console.log(res);
+      if(res.status==200){
+        setOpen(true)
+        
+      }
     }catch(err){
       console.log(err.message);
     }
    
   };
-console.log(file,"file");
+
   return (
     <Box
       sx={{
@@ -64,6 +85,29 @@ console.log(file,"file");
           Submit
         </Button>
       </form>
+   {open && (
+    <div>
+    <Dialog
+      fullScreen={fullScreen}
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="responsive-dialog-title"
+    >
+      <DialogContent>
+        <DialogContentText>
+          File Uploaded SuccessFully
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} autoFocus>
+          OK
+        </Button>
+      </DialogActions>
+    </Dialog>
+  </div>
+   )}
+
+
     </Box>
   );
 };
